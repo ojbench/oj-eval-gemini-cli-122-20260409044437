@@ -14,8 +14,10 @@ class Memo {
 
   Memo(int duration) : duration_(duration), current_time_(0) {
     heads_ = new EventNode*[duration_ + 1];
+    tails_ = new EventNode*[duration_ + 1];
     for (int i = 0; i <= duration_; ++i) {
       heads_[i] = nullptr;
+      tails_[i] = nullptr;
     }
   }
 
@@ -29,6 +31,7 @@ class Memo {
       }
     }
     delete[] heads_;
+    delete[] tails_;
   }
 
   void AddEvent(const Event *event) {
@@ -51,6 +54,7 @@ class Memo {
 
     EventNode* curr = heads_[current_time_];
     heads_[current_time_] = nullptr;
+    tails_[current_time_] = nullptr;
 
     while (curr != nullptr) {
       EventNode* next_node = curr->next;
@@ -96,16 +100,15 @@ class Memo {
   int duration_;
   int current_time_;
   EventNode** heads_;
+  EventNode** tails_;
 
   void AddNode(int time, EventNode* node) {
     if (heads_[time] == nullptr) {
       heads_[time] = node;
+      tails_[time] = node;
     } else {
-      EventNode* curr = heads_[time];
-      while (curr->next != nullptr) {
-        curr = curr->next;
-      }
-      curr->next = node;
+      tails_[time]->next = node;
+      tails_[time] = node;
     }
   }
 };
